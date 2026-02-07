@@ -2,24 +2,24 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Infinite Drift Car Game</title>
+<title>City Drive Pro</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-body{margin:0;overflow:hidden;background:black;font-family:Arial}
-#menu{position:fixed;inset:0;background:black;color:white;
-display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+body{margin:0;overflow:hidden;background:#000;font-family:Arial}
+#menu{position:fixed;inset:0;background:#000;color:#fff;
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
 button{padding:12px 20px;font-size:18px}
 #ui{position:fixed;top:10px;left:10px;color:white}
-.controls{position:fixed;bottom:10px;width:100%;display:flex;justify-content:space-between;padding:20px;box-sizing:border-box}
-.ctrl{background:#ffffff33;color:white;border:none;padding:15px;font-size:20px}
+.controls{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-between;padding:20px;box-sizing:border-box}
+.ctrl{background:#ffffff22;border:none;color:white;font-size:20px;padding:15px}
 </style>
 </head>
 <body>
 
 <div id="menu">
-<h1>INFINITE DRIFT</h1>
-<button onclick="start()">START GAME</button>
-<button onclick="rotate()">ROTATE SCREEN</button>
+<h1>CITY DRIVE PRO</h1>
+<button onclick="startGame()">START</button>
+<button onclick="rotate()">ROTATE</button>
 </div>
 
 <div id="ui">Speed:<span id="spd">0</span> Score:<span id="score">0</span> HP:<span id="hp">100</span></div>
@@ -32,33 +32,34 @@ button{padding:12px 20px;font-size:18px}
 <div>
 <button class="ctrl" ontouchstart="keys.up=1" ontouchend="keys.up=0">▲</button>
 <button class="ctrl" ontouchstart="keys.down=1" ontouchend="keys.down=0">▼</button>
-<button class="ctrl" ontouchstart="keys.nitro=1" ontouchend="keys.nitro=0">⚡</button>
 </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script>
 
+<script>
 let scene,camera,renderer,car;
-let speed=0,score=0,health=100;
-let roadTiles=[],enemies=[],coins=[];
+let speed=0,health=100,score=0;
 let keys={},running=false;
+let coins=[],traffic=[];
+let heading=0;
 
 function rotate(){
- if(screen.orientation && screen.orientation.lock)
- screen.orientation.lock("landscape").catch(()=>{});
+if(screen.orientation && screen.orientation.lock)
+screen.orientation.lock("landscape").catch(()=>{});
 }
 
-function start(){
- document.getElementById("menu").style.display="none";
- init(); running=true; animate();
+function startGame(){
+document.getElementById("menu").style.display="none";
+init(); running=true; animate();
 }
 
 function init(){
+
 scene=new THREE.Scene();
 
 camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
-renderer=new THREE.WebGLRenderer();
+renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -67,113 +68,124 @@ light.position.set(5,10,5);
 scene.add(light);
 
 let ground=new THREE.Mesh(
- new THREE.PlaneGeometry(200,2000),
- new THREE.MeshStandardMaterial({color:0x222222})
+new THREE.PlaneGeometry(600,600),
+new THREE.MeshStandardMaterial({color:0x222222})
 );
 ground.rotation.x=-Math.PI/2;
 scene.add(ground);
 
-// infinite road tiles
-for(let i=0;i<10;i++)createRoad(i*-40);
+// roads grid
+for(let i=-250;i<=250;i+=40){
+let road=new THREE.Mesh(
+new THREE.PlaneGeometry(20,600),
+new THREE.MeshStandardMaterial({color:0x555555})
+);
+road.rotation.x=-Math.PI/2;
+road.position.x=i;
+scene.add(road);
 
-// better low poly car
+let road2=road.clone();
+road2.rotation.z=Math.PI/2;
+road2.position.set(0,0.01,i);
+scene.add(road2);
+}
+
+// buildings
+for(let i=0;i<120;i++){
+let b=new THREE.Mesh(
+new THREE.BoxGeometry(10,Math.random()*40+10,10),
+new THREE.MeshStandardMaterial({color:0x777777})
+);
+b.position.set(Math.random()*500-250,5,Math.random()*500-250);
+scene.add(b);
+}
+
+// better car model
+car=new THREE.Group();
+
 let body=new THREE.Mesh(
- new THREE.BoxGeometry(2,0.8,4),
- new THREE.MeshStandardMaterial({color:0xff0000})
+new THREE.BoxGeometry(2,0.7,4),
+new THREE.MeshStandardMaterial({color:0xff0000})
 );
 let top=new THREE.Mesh(
- new THREE.BoxGeometry(1.5,0.7,2),
- new THREE.MeshStandardMaterial({color:0xaa0000})
+new THREE.BoxGeometry(1.5,0.7,2),
+new THREE.MeshStandardMaterial({color:0xaa0000})
 );
-top.position.y=0.8;
+top.position.y=0.7;
+
+let wheelGeo=new THREE.CylinderGeometry(0.4,0.4,0.5,16);
+let wheelMat=new THREE.MeshStandardMaterial({color:0x111111});
+
+function wheel(x,z){
+let w=new THREE.Mesh(wheelGeo,wheelMat);
+w.rotation.z=Math.PI/2;
+w.position.set(x,-0.3,z);
+car.add(w);
+}
+wheel(1,1.5);wheel(-1,1.5);wheel(1,-1.5);wheel(-1,-1.5);
+
+car.add(body);
 body.add(top);
-car=body;
-car.position.y=0.5;
+car.position.y=1;
 scene.add(car);
 
-camera.position.set(0,5,10);
-}
-
-function createRoad(z){
-let tile=new THREE.Mesh(
- new THREE.PlaneGeometry(12,40),
- new THREE.MeshStandardMaterial({color:0x555555})
+// coins
+for(let i=0;i<40;i++){
+let c=new THREE.Mesh(
+new THREE.BoxGeometry(1,1,1),
+new THREE.MeshStandardMaterial({color:0xffff00})
 );
-tile.rotation.x=-Math.PI/2;
-tile.position.z=z;
-tile.position.y=0.01;
-scene.add(tile);
-roadTiles.push(tile);
-
-// spawn enemy
-if(Math.random()<0.5){
- let e=new THREE.Mesh(
-  new THREE.BoxGeometry(2,1,4),
-  new THREE.MeshStandardMaterial({color:0x00ff00})
- );
- e.position.set(Math.random()*6-3,0.5,z);
- scene.add(e);
- enemies.push(e);
+c.position.set(Math.random()*400-200,1,Math.random()*400-200);
+scene.add(c); coins.push(c);
 }
 
-// spawn coin
-if(Math.random()<0.7){
- let c=new THREE.Mesh(
-  new THREE.BoxGeometry(1,1,1),
-  new THREE.MeshStandardMaterial({color:0xffff00})
- );
- c.position.set(Math.random()*6-3,0.5,z);
- scene.add(c);
- coins.push(c);
+// traffic
+for(let i=0;i<20;i++){
+let t=new THREE.Mesh(
+new THREE.BoxGeometry(2,1,4),
+new THREE.MeshStandardMaterial({color:0x00ff00})
+);
+t.position.set(Math.random()*400-200,1,Math.random()*400-200);
+scene.add(t); traffic.push(t);
 }
+
+camera.position.set(0,8,12);
 }
 
 function update(){
 
-// accel & drift
 if(keys.up)speed+=0.01;
 if(keys.down)speed-=0.02;
 speed*=0.98;
-if(keys.nitro)speed+=0.02;
-speed=Math.max(0,Math.min(speed,1.5));
+speed=Math.max(-0.5,Math.min(speed,1.5));
 
-car.position.z-=speed*2;
+if(keys.left)heading+=0.04;
+if(keys.right)heading-=0.04;
 
-if(keys.left){car.position.x-=0.2; car.rotation.z=0.2;}
-else if(keys.right){car.position.x+=0.2; car.rotation.z=-0.2;}
-else car.rotation.z*=0.9;
+car.rotation.y=heading;
 
-// infinite map recycle
-roadTiles.forEach(t=>{
- if(car.position.z - t.position.z < -200){
-  t.position.z-=400;
-  createRoad(t.position.z-40);
- }
-});
+car.position.x+=Math.sin(heading)*speed*3;
+car.position.z+=Math.cos(heading)*speed*3;
 
-// enemy collision
-enemies.forEach(e=>{
- if(car.position.distanceTo(e.position)<2){
-  health-=0.5;
- }
-});
-
-// coins
 coins.forEach(c=>{
- if(c.visible && car.position.distanceTo(c.position)<2){
-  c.visible=false;
-  score+=10;
- }
+if(c.visible && car.position.distanceTo(c.position)<2){
+c.visible=false; score+=10;
+}
+});
+
+traffic.forEach(t=>{
+if(car.position.distanceTo(t.position)<3)health-=0.2;
 });
 
 if(health<=0){alert("Game Over");location.reload();}
 
-document.getElementById("score").innerText=score;
-document.getElementById("hp").innerText=health;
 document.getElementById("spd").innerText=(speed*100).toFixed(0);
+document.getElementById("hp").innerText=health.toFixed(0);
+document.getElementById("score").innerText=score;
 
-camera.position.x=car.position.x;
-camera.position.z=car.position.z+10;
+let camOffset=new THREE.Vector3(
+Math.sin(heading)*-12,8,Math.cos(heading)*-12);
+camera.position.copy(car.position.clone().add(camOffset));
 camera.lookAt(car.position);
 }
 
@@ -189,7 +201,6 @@ if(e.key==="ArrowUp")keys.up=1;
 if(e.key==="ArrowDown")keys.down=1;
 if(e.key==="ArrowLeft")keys.left=1;
 if(e.key==="ArrowRight")keys.right=1;
-if(e.key==="Shift")keys.nitro=1;
 });
 window.addEventListener("keyup",()=>keys={});
 
