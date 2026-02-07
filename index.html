@@ -7,19 +7,24 @@
 <style>
 body{margin:0;overflow:hidden;background:#87ceeb;font-family:Arial}
 #menu{
-position:fixed;inset:0;background:#000000cc;color:white;
-display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px}
+  position:fixed;inset:0;background:#000000cc;color:white;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px
+}
 button{padding:12px 22px;font-size:18px}
 #ui{position:fixed;top:10px;left:10px;color:white}
-.controls{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-between;padding:20px;box-sizing:border-box}
+.controls{
+  position:fixed;bottom:0;width:100%;display:flex;justify-content:space-between;padding:20px;box-sizing:border-box
+}
 .ctrl{background:#ffffff22;border:none;color:white;font-size:20px;padding:15px}
 </style>
 </head>
 <body>
+
 <div id="menu">
 <h1>CITY DRIVE PRO</h1>
-<button onclick="startGame()">START</button>
-<button onclick="rotateScreen()">ROTATE</button>
+<button onclick="startGame()">START GAME</button>
+<button onclick="rotateScreen()">ROTATE SCREEN</button>
+<div id="loading" style="margin-top:10px;display:none;color:white;">Loading car...</div>
 </div>
 
 <div id="ui">Speed:<span id="spd">0</span> Score:<span id="score">0</span> HP:<span id="hp">100</span></div>
