@@ -2,36 +2,27 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Mobile 3D Car Game</title>
+<title>Infinite Drift Car Game</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
 body{margin:0;overflow:hidden;background:black;font-family:Arial}
-canvas{display:block}
+#menu{position:fixed;inset:0;background:black;color:white;
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+button{padding:12px 20px;font-size:18px}
 #ui{position:fixed;top:10px;left:10px;color:white}
-#menu{
-position:fixed;inset:0;background:black;color:white;
-display:flex;flex-direction:column;align-items:center;justify-content:center;
-gap:10px
-}
-button{padding:10px 20px;font-size:16px}
-.controls{
-position:fixed;bottom:20px;width:100%;
-display:flex;justify-content:space-between;padding:20px;
-box-sizing:border-box
-}
-.ctrl{background:#ffffff33;color:white;border:none;
-padding:15px 20px;font-size:20px}
+.controls{position:fixed;bottom:10px;width:100%;display:flex;justify-content:space-between;padding:20px;box-sizing:border-box}
+.ctrl{background:#ffffff33;color:white;border:none;padding:15px;font-size:20px}
 </style>
 </head>
 <body>
 
 <div id="menu">
-<h1>3D CAR GAME</h1>
-<button onclick="startGame()">START</button>
-<button onclick="rotateScreen()">ROTATE SCREEN</button>
+<h1>INFINITE DRIFT</h1>
+<button onclick="start()">START GAME</button>
+<button onclick="rotate()">ROTATE SCREEN</button>
 </div>
 
-<div id="ui">Score: <span id="score">0</span> | Health: <span id="hp">100</span></div>
+<div id="ui">Speed:<span id="spd">0</span> Score:<span id="score">0</span> HP:<span id="hp">100</span></div>
 
 <div class="controls">
 <div>
@@ -41,148 +32,164 @@ padding:15px 20px;font-size:20px}
 <div>
 <button class="ctrl" ontouchstart="keys.up=1" ontouchend="keys.up=0">▲</button>
 <button class="ctrl" ontouchstart="keys.down=1" ontouchend="keys.down=0">▼</button>
+<button class="ctrl" ontouchstart="keys.nitro=1" ontouchend="keys.nitro=0">⚡</button>
 </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-
 <script>
-let scene,camera,renderer,car;
-let coins=[],obstacles=[];
-let score=0,health=100;
-let keys={};
-let running=false;
 
-function rotateScreen(){
- if(screen.orientation && screen.orientation.lock){
-  screen.orientation.lock("landscape").catch(()=>{});
- }
+let scene,camera,renderer,car;
+let speed=0,score=0,health=100;
+let roadTiles=[],enemies=[],coins=[];
+let keys={},running=false;
+
+function rotate(){
+ if(screen.orientation && screen.orientation.lock)
+ screen.orientation.lock("landscape").catch(()=>{});
 }
 
-function startGame(){
+function start(){
  document.getElementById("menu").style.display="none";
- init();
- running=true;
- animate();
+ init(); running=true; animate();
 }
 
 function init(){
- scene=new THREE.Scene();
- camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
- renderer=new THREE.WebGLRenderer();
- renderer.setSize(innerWidth,innerHeight);
- document.body.appendChild(renderer.domElement);
+scene=new THREE.Scene();
 
- let light=new THREE.DirectionalLight(0xffffff,1);
- light.position.set(5,10,5);
- scene.add(light);
+camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
+renderer=new THREE.WebGLRenderer();
+renderer.setSize(innerWidth,innerHeight);
+document.body.appendChild(renderer.domElement);
 
- let ground=new THREE.Mesh(
- new THREE.PlaneGeometry(500,500),
+let light=new THREE.DirectionalLight(0xffffff,1);
+light.position.set(5,10,5);
+scene.add(light);
+
+let ground=new THREE.Mesh(
+ new THREE.PlaneGeometry(200,2000),
  new THREE.MeshStandardMaterial({color:0x222222})
- );
- ground.rotation.x=-Math.PI/2;
- scene.add(ground);
+);
+ground.rotation.x=-Math.PI/2;
+scene.add(ground);
 
- // road
- let road=new THREE.Mesh(
- new THREE.PlaneGeometry(20,500),
- new THREE.MeshStandardMaterial({color:0x555555})
- );
- road.rotation.x=-Math.PI/2;
- road.position.y=0.01;
- scene.add(road);
+// infinite road tiles
+for(let i=0;i<10;i++)createRoad(i*-40);
 
- // buildings
- for(let i=0;i<30;i++){
-  let b=new THREE.Mesh(
-   new THREE.BoxGeometry(5,Math.random()*10+5,5),
-   new THREE.MeshStandardMaterial({color:0x888888})
-  );
-  b.position.set((Math.random()>0.5?30:-30),3,Math.random()*400-200);
-  scene.add(b);
- }
-
- // car
- car=new THREE.Mesh(
- new THREE.BoxGeometry(2,1,4),
+// better low poly car
+let body=new THREE.Mesh(
+ new THREE.BoxGeometry(2,0.8,4),
  new THREE.MeshStandardMaterial({color:0xff0000})
+);
+let top=new THREE.Mesh(
+ new THREE.BoxGeometry(1.5,0.7,2),
+ new THREE.MeshStandardMaterial({color:0xaa0000})
+);
+top.position.y=0.8;
+body.add(top);
+car=body;
+car.position.y=0.5;
+scene.add(car);
+
+camera.position.set(0,5,10);
+}
+
+function createRoad(z){
+let tile=new THREE.Mesh(
+ new THREE.PlaneGeometry(12,40),
+ new THREE.MeshStandardMaterial({color:0x555555})
+);
+tile.rotation.x=-Math.PI/2;
+tile.position.z=z;
+tile.position.y=0.01;
+scene.add(tile);
+roadTiles.push(tile);
+
+// spawn enemy
+if(Math.random()<0.5){
+ let e=new THREE.Mesh(
+  new THREE.BoxGeometry(2,1,4),
+  new THREE.MeshStandardMaterial({color:0x00ff00})
  );
- car.position.y=0.5;
- scene.add(car);
+ e.position.set(Math.random()*6-3,0.5,z);
+ scene.add(e);
+ enemies.push(e);
+}
 
- // coins
- for(let i=0;i<20;i++){
-  let c=new THREE.Mesh(
-   new THREE.BoxGeometry(1,1,1),
-   new THREE.MeshStandardMaterial({color:0xffff00})
-  );
-  c.position.set(Math.random()*10-5,0.5,Math.random()*-200);
-  scene.add(c);
-  coins.push(c);
- }
-
- // obstacles
- for(let i=0;i<15;i++){
-  let o=new THREE.Mesh(
-   new THREE.BoxGeometry(2,2,2),
-   new THREE.MeshStandardMaterial({color:0x00ff00})
-  );
-  o.position.set(Math.random()*10-5,1,Math.random()*-200);
-  scene.add(o);
-  obstacles.push(o);
- }
-
- camera.position.set(0,5,10);
+// spawn coin
+if(Math.random()<0.7){
+ let c=new THREE.Mesh(
+  new THREE.BoxGeometry(1,1,1),
+  new THREE.MeshStandardMaterial({color:0xffff00})
+ );
+ c.position.set(Math.random()*6-3,0.5,z);
+ scene.add(c);
+ coins.push(c);
+}
 }
 
 function update(){
- if(keys.up)car.position.z-=0.3;
- if(keys.down)car.position.z+=0.3;
- if(keys.left)car.position.x-=0.3;
- if(keys.right)car.position.x+=0.3;
 
- // coin collect
- coins.forEach(c=>{
-  if(c.visible && car.position.distanceTo(c.position)<2){
-   c.visible=false;
-   score+=10;
-  }
- });
+// accel & drift
+if(keys.up)speed+=0.01;
+if(keys.down)speed-=0.02;
+speed*=0.98;
+if(keys.nitro)speed+=0.02;
+speed=Math.max(0,Math.min(speed,1.5));
 
- // obstacle hit
- obstacles.forEach(o=>{
-  if(car.position.distanceTo(o.position)<2){
-   health-=1;
-  }
- });
+car.position.z-=speed*2;
 
- if(health<=0){
-  running=false;
-  alert("Game Over");
-  location.reload();
+if(keys.left){car.position.x-=0.2; car.rotation.z=0.2;}
+else if(keys.right){car.position.x+=0.2; car.rotation.z=-0.2;}
+else car.rotation.z*=0.9;
+
+// infinite map recycle
+roadTiles.forEach(t=>{
+ if(car.position.z - t.position.z < -200){
+  t.position.z-=400;
+  createRoad(t.position.z-40);
  }
+});
 
- document.getElementById("score").innerText=score;
- document.getElementById("hp").innerText=health;
+// enemy collision
+enemies.forEach(e=>{
+ if(car.position.distanceTo(e.position)<2){
+  health-=0.5;
+ }
+});
 
- camera.position.x=car.position.x;
- camera.position.z=car.position.z+10;
- camera.lookAt(car.position);
+// coins
+coins.forEach(c=>{
+ if(c.visible && car.position.distanceTo(c.position)<2){
+  c.visible=false;
+  score+=10;
+ }
+});
+
+if(health<=0){alert("Game Over");location.reload();}
+
+document.getElementById("score").innerText=score;
+document.getElementById("hp").innerText=health;
+document.getElementById("spd").innerText=(speed*100).toFixed(0);
+
+camera.position.x=car.position.x;
+camera.position.z=car.position.z+10;
+camera.lookAt(car.position);
 }
 
 function animate(){
- if(!running)return;
- requestAnimationFrame(animate);
- update();
- renderer.render(scene,camera);
+if(!running)return;
+requestAnimationFrame(animate);
+update();
+renderer.render(scene,camera);
 }
 
 window.addEventListener("keydown",e=>{
- if(e.key==="ArrowUp")keys.up=1;
- if(e.key==="ArrowDown")keys.down=1;
- if(e.key==="ArrowLeft")keys.left=1;
- if(e.key==="ArrowRight")keys.right=1;
+if(e.key==="ArrowUp")keys.up=1;
+if(e.key==="ArrowDown")keys.down=1;
+if(e.key==="ArrowLeft")keys.left=1;
+if(e.key==="ArrowRight")keys.right=1;
+if(e.key==="Shift")keys.nitro=1;
 });
 window.addEventListener("keyup",()=>keys={});
 
