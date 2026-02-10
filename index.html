@@ -4,37 +4,92 @@
 <meta charset="UTF-8">
 <title>car biTz h9</title>
 <style>
-body{margin:0;overflow:hidden;background:black;font-family:sans-serif}
-#ui{position:absolute;top:10px;left:10px;color:white;background:rgba(0,0,0,0.5);padding:8px;border-radius:8px}
-.btn{
-position:absolute;width:60px;height:60px;
+body{margin:0;overflow:hidden;font-family:sans-serif;background:black}
+.menu{
+position:absolute;top:0;left:0;width:100%;height:100%;
+background:#111;color:white;display:flex;
+flex-direction:column;align-items:center;justify-content:center}
+button{padding:12px;margin:8px;font-size:18px;border:none;border-radius:10px}
+#gameUI{position:absolute;top:10px;left:10px;color:white;display:none}
+.ctrl{position:absolute;width:70px;height:70px;
 background:rgba(255,255,255,0.2);
-color:white;font-size:25px;
-display:flex;align-items:center;justify-content:center;
-border-radius:10px;user-select:none}
-#up{bottom:120px;left:80px}
-#down{bottom:40px;left:80px}
-#left{bottom:80px;left:10px}
-#right{bottom:80px;left:150px}
+color:white;font-size:30px;
+display:flex;align-items:center;justify-content:center;border-radius:12px}
+#up{bottom:140px;left:90px}
+#down{bottom:50px;left:90px}
+#left{bottom:95px;left:10px}
+#right{bottom:95px;left:170px}
 </style>
 </head>
 <body>
 
-<div id="ui">car biTz h9<br>Crashes: <span id="crash">0</span></div>
+<div id="menu" class="menu">
+<h1>car biTz h9</h1>
+<button onclick="startGame()">Start</button>
+<button onclick="openShop()">Shop</button>
+</div>
 
-<div id="up" class="btn">↑</div>
-<div id="down" class="btn">↓</div>
-<div id="left" class="btn">←</div>
-<div id="right" class="btn">→</div>
+<div id="shop" class="menu" style="display:none">
+<h2>Shop</h2>
+<div id="cars"></div>
+<button onclick="backMenu()">Back</button>
+</div>
+
+<div id="gameUI">Coins:<span id="coins">0</span> Score:<span id="score">0</span></div>
+
+<div id="up" class="ctrl">↑</div>
+<div id="down" class="ctrl">↓</div>
+<div id="left" class="ctrl">←</div>
+<div id="right" class="ctrl">→</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-
 <script>
-let scene=new THREE.Scene();
-scene.background=new THREE.Color(0x87ceeb);
+let coins=0,score=0,equipped=0;
+let owned=[true,false,false];
+let carsData=[
+{name:"Starter",speed:0.5,price:0,color:0xff4444},
+{name:"Sport",speed:0.8,price:13000,color:0x44ff44},
+{name:"Hyper",speed:1.1,price:22000,color:0x4444ff}
+];
 
-let camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
-let renderer=new THREE.WebGLRenderer({antialias:true});
+function openShop(){
+menu.style.display="none";
+shop.style.display="flex";
+renderShop();
+}
+function backMenu(){
+shop.style.display="none";
+menu.style.display="flex";
+}
+function renderShop(){
+cars.innerHTML="";
+carsData.forEach((c,i)=>{
+let b=document.createElement("button");
+if(owned[i]) b.innerText=(equipped==i?"Equipped ":"Equip ")+c.name;
+else b.innerText="Buy "+c.name+" "+c.price;
+b.onclick=()=>{
+if(!owned[i] && coins>=c.price){coins-=c.price;owned[i]=true}
+if(owned[i])equipped=i;
+updateUI();renderShop();
+};
+cars.appendChild(b);
+});
+}
+
+let scene,camera,renderer,car,roadZ=0,keys={};
+
+function startGame(){
+menu.style.display="none";
+shop.style.display="none";
+gameUI.style.display="block";
+init3D();
+}
+
+function init3D(){
+scene=new THREE.Scene();
+scene.background=new THREE.Color(0x87ceeb);
+camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
+renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -44,113 +99,86 @@ sun.position.set(50,100,50);
 scene.add(sun);
 
 let ground=new THREE.Mesh(
-new THREE.PlaneGeometry(500,500),
+new THREE.PlaneGeometry(200,2000),
 new THREE.MeshStandardMaterial({color:0x3cb371})
 );
 ground.rotation.x=-Math.PI/2;
 scene.add(ground);
 
-function road(x,z,w,h){
+createRoad(0);
+
+car=new THREE.Group();
+let body=new THREE.Mesh(
+new THREE.BoxGeometry(3,1.2,6),
+new THREE.MeshStandardMaterial({color:carsData[equipped].color})
+);
+body.position.y=1;car.add(body);
+scene.add(car);
+
+animate();
+}
+
+function createRoad(z){
+for(let i=0;i<20;i++){
 let r=new THREE.Mesh(
-new THREE.PlaneGeometry(w,h),
+new THREE.PlaneGeometry(20,100),
 new THREE.MeshStandardMaterial({color:0x222222})
 );
 r.rotation.x=-Math.PI/2;
-r.position.set(x,0.01,z);
+r.position.set(0,0.01,z-(i*100));
 scene.add(r);
-}
-road(0,0,40,400);
-road(0,0,400,40);
 
-let buildings=[];
-for(let i=-180;i<=180;i+=40){
+let barrierL=new THREE.Mesh(
+new THREE.BoxGeometry(2,3,100),
+new THREE.MeshStandardMaterial({color:0xffff00})
+);
+barrierL.position.set(-12,1.5,r.position.z);
+scene.add(barrierL);
+
+let barrierR=barrierL.clone();
+barrierR.position.x=12;
+scene.add(barrierR);
+
+for(let s=-25;s<=25;s+=50){
 let b=new THREE.Mesh(
-new THREE.BoxGeometry(20,20+Math.random()*30,20),
+new THREE.BoxGeometry(10,10+Math.random()*20,10),
 new THREE.MeshStandardMaterial({color:Math.random()*0xffffff})
 );
-b.position.set(60,b.geometry.parameters.height/2,i);
-scene.add(b);buildings.push(b);
-
-let b2=b.clone();b2.position.x=-60;
-scene.add(b2);buildings.push(b2);
+b.position.set(s,5,r.position.z);
+scene.add(b);
+}
+}
 }
 
-let car=new THREE.Group();
-let body=new THREE.Mesh(
-new THREE.BoxGeometry(4,1.5,8),
-new THREE.MeshStandardMaterial({color:0xff4444})
-);
-body.position.y=1;car.add(body);
-
-let topc=new THREE.Mesh(
-new THREE.BoxGeometry(3,1.5,3),
-new THREE.MeshStandardMaterial({color:0x1111ff})
-);
-topc.position.set(0,2,0);car.add(topc);
-scene.add(car);
-
-let speed=0,crashes=0;
-let keys={up:false,down:false,left:false,right:false};
-
-document.addEventListener("keydown",e=>{
-if(e.key=="w"||e.key=="ArrowUp")keys.up=true;
-if(e.key=="s"||e.key=="ArrowDown")keys.down=true;
-if(e.key=="a"||e.key=="ArrowLeft")keys.left=true;
-if(e.key=="d"||e.key=="ArrowRight")keys.right=true;
-});
-document.addEventListener("keyup",e=>{
-if(e.key=="w"||e.key=="ArrowUp")keys.up=false;
-if(e.key=="s"||e.key=="ArrowDown")keys.down=false;
-if(e.key=="a"||e.key=="ArrowLeft")keys.left=false;
-if(e.key=="d"||e.key=="ArrowRight")keys.right=false;
+["up","down","left","right"].forEach(id=>{
+document.getElementById(id).ontouchstart=()=>keys[id]=true;
+document.getElementById(id).ontouchend=()=>keys[id]=false;
 });
 
-function touch(id,key){
-let el=document.getElementById(id);
-el.ontouchstart=()=>keys[key]=true;
-el.ontouchend=()=>keys[key]=false;
-}
-touch("up","up");
-touch("down","down");
-touch("left","left");
-touch("right","right");
-
-function explode(){
-let boom=new THREE.Mesh(
-new THREE.SphereGeometry(3,16,16),
-new THREE.MeshBasicMaterial({color:0xffaa00})
-);
-boom.position.copy(car.position);
-scene.add(boom);
-setTimeout(()=>scene.remove(boom),500);
-car.position.set(0,0,0);
-speed=0;crashes=0;
+function updateUI(){
+coinsEl=document.getElementById("coins");
+scoreEl=document.getElementById("score");
+if(coinsEl)coinsEl.innerText=Math.floor(coins);
+if(scoreEl)scoreEl.innerText=Math.floor(score);
 }
 
 function update(){
-if(keys.up)speed+=0.03;
-if(keys.down)speed-=0.03;
-speed*=0.97;
+let speed=carsData[equipped].speed;
 
-if(keys.left)car.rotation.y+=0.04*(speed*3);
-if(keys.right)car.rotation.y-=0.04*(speed*3);
+if(keys.up)car.position.z-=speed*2;
+if(keys.down)car.position.z+=speed*2;
+if(keys.left)car.position.x-=speed;
+if(keys.right)car.position.x+=speed;
 
-car.position.x+=Math.sin(car.rotation.y)*speed*2;
-car.position.z+=Math.cos(car.rotation.y)*speed*2;
+if(car.position.x<-10)car.position.x=-10;
+if(car.position.x>10)car.position.x=10;
 
-for(let b of buildings){
-if(car.position.distanceTo(b.position)<12){
-crashes++;
-document.getElementById("crash").innerText=crashes;
-speed*=-0.5;
-if(crashes>=3)explode();
-}
-}
+score+=0.05;
+if(Math.floor(score)%5==0)coins+=0.02;
 
-camera.position.x=car.position.x- Math.sin(car.rotation.y)*18;
-camera.position.z=car.position.z- Math.cos(car.rotation.y)*18;
-camera.position.y=12;
+camera.position.set(car.position.x,10,car.position.z+15);
 camera.lookAt(car.position);
+updateUI();
 }
 
 function animate(){
@@ -158,13 +186,6 @@ requestAnimationFrame(animate);
 update();
 renderer.render(scene,camera);
 }
-animate();
-
-onresize=()=>{
-camera.aspect=innerWidth/innerHeight;
-camera.updateProjectionMatrix();
-renderer.setSize(innerWidth,innerHeight);
-};
 </script>
 </body>
 </html>
