@@ -9,9 +9,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Poppins;background:#0e0e0e;color:#fff}
-a{text-decoration:none;color:white}
-section{padding:80px 10%}
+body{font-family:Poppins;background:#0f0f0f;color:#fff}
 
 nav{
 display:flex;
@@ -22,8 +20,11 @@ background:#111;
 position:sticky;
 top:0;
 }
+
 .logo{color:orange;font-size:28px;font-weight:700}
+
 nav ul{display:flex;gap:25px;list-style:none}
+nav ul li a{color:white;text-decoration:none}
 nav ul li a:hover{color:orange}
 
 .hero{
@@ -33,9 +34,10 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 text-align:center;
-background:#151515;
+background:#141414;
 animation:fadeUp 1s ease;
 }
+
 .hero h1{font-size:60px;color:orange;margin-bottom:20px}
 .hero p{font-size:20px;margin-bottom:25px}
 
@@ -45,77 +47,37 @@ padding:14px 30px;
 border-radius:40px;
 font-weight:600;
 color:#111;
+text-decoration:none;
 transition:.3s;
-border:none;
-cursor:pointer;
 }
 .btn:hover{background:#ff6a00}
+
+.features{
+padding:80px 10%;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+
+.feature{
+background:#1a1a1a;
+padding:25px;
+border-radius:12px;
+transition:.3s;
+}
+.feature:hover{box-shadow:0 0 15px orange}
+
+footer{
+text-align:center;
+padding:20px;
+background:#111;
+color:#aaa;
+}
 
 @keyframes fadeUp{
 0%{opacity:0;transform:translateY(40px)}
 100%{opacity:1;transform:translateY(0)}
 }
-
-.plans h2{text-align:center;color:orange;font-size:40px;margin-bottom:40px}
-
-.toggle{text-align:center;margin-bottom:30px}
-.toggle button{
-padding:10px 20px;
-border:none;
-margin:5px;
-border-radius:30px;
-font-weight:600;
-cursor:pointer;
-}
-.active{background:orange;color:#111}
-
-.plans-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:30px;
-}
-
-.plan{
-background:#1a1a1a;
-padding:25px;
-border-radius:12px;
-text-align:center;
-transition:.3s;
-}
-.plan:hover{
-transform:translateY(-10px);
-box-shadow:0 0 20px orange;
-}
-
-.plan img{
-width:100%;
-height:160px;
-object-fit:cover;
-border-radius:10px;
-margin-bottom:15px;
-}
-
-.price{font-size:28px;font-weight:700;margin:15px 0;color:orange}
-
-.servers h2{text-align:center;color:orange;margin-bottom:40px}
-.server-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-}
-.server{
-background:#1a1a1a;
-padding:25px;
-border-radius:10px;
-transition:.3s;
-}
-.server:hover{box-shadow:0 0 15px orange}
-
-.contact h2{text-align:center;color:orange;margin-bottom:40px}
-form{max-width:500px;margin:auto;display:flex;flex-direction:column;gap:15px}
-input,textarea{padding:12px;border-radius:8px;border:none}
-
-footer{text-align:center;padding:20px;background:#111;color:#aaa}
 </style>
 </head>
 
@@ -124,113 +86,44 @@ footer{text-align:center;padding:20px;background:#111;color:#aaa}
 <nav>
 <div class="logo">SDX NODES</div>
 <ul>
-<li><a href="#">Home</a></li>
-<li><a href="#plans">Plans</a></li>
-<li><a href="#servers">Servers</a></li>
-<li><a href="#contact">Contact</a></li>
+<li><a href="index.html">Home</a></li>
+<li><a href="plans.html">Plans</a></li>
+<li><a href="servers.html">Servers</a></li>
+<li><a href="contact.html">Contact</a></li>
 </ul>
 </nav>
 
 <section class="hero">
 <h1>SDX NODES Hosting</h1>
-<p>Fast • Secure • Professional Hosting Solutions</p>
-<a href="#plans" class="btn">View Plans</a>
+<p>High Performance • Low Latency • Professional Hosting</p>
+<a href="plans.html" class="btn">View Hosting Plans</a>
 </section>
 
-<section class="plans" id="plans">
-<h2>Hosting Plans</h2>
-
-<div class="toggle">
-<button id="pkr" class="active">PKR</button>
-<button id="inr">INR</button>
+<section class="features">
+<div class="feature">
+<h3>⚡ High Performance</h3>
+<p>Powerful hardware with 100% CPU power.</p>
 </div>
 
-<div class="plans-grid">
-
-<div class="plan">
-<img src="grass.png">
-<h3>Grass Plan</h3>
-<p>2GB RAM • 100% CPU</p>
-<div class="price" data-pkr="100" data-inr="31">PKR 100</div>
-<button class="btn">Buy</button>
+<div class="feature">
+<h3>🛡 Secure Servers</h3>
+<p>Advanced protection and stable uptime.</p>
 </div>
 
-<div class="plan">
-<img src="stone.png">
-<h3>Stone Plan</h3>
-<p>4GB RAM • 100% CPU</p>
-<div class="price" data-pkr="170" data-inr="53">PKR 170</div>
-<button class="btn">Buy</button>
+<div class="feature">
+<h3>🌐 Global Nodes</h3>
+<p>Multiple server locations worldwide.</p>
 </div>
 
-<div class="plan">
-<img src="iron.png">
-<h3>Iron Plan</h3>
-<p>6GB RAM • 100% CPU</p>
-<div class="price" data-pkr="250" data-inr="78">PKR 250</div>
-<button class="btn">Buy</button>
+<div class="feature">
+<h3>🎮 Easy Control Panel</h3>
+<p>Manage servers easily anytime.</p>
 </div>
-
-<div class="plan">
-<img src="gold.png">
-<h3>Gold Plan</h3>
-<p>8GB RAM • 100% CPU</p>
-<div class="price" data-pkr="400" data-inr="124">PKR 400</div>
-<button class="btn">Buy</button>
-</div>
-
-<div class="plan">
-<img src="diamond.png">
-<h3>Diamond Plan</h3>
-<p>10GB RAM • 100% CPU</p>
-<div class="price" data-pkr="800" data-inr="248">PKR 800</div>
-<button class="btn">Buy</button>
-</div>
-
-</div>
-</section>
-
-<section class="servers" id="servers">
-<h2>Server Locations</h2>
-<div class="server-grid">
-<div class="server">Pakistan Node - Low Ping</div>
-<div class="server">India Node - Stable</div>
-<div class="server">Europe Node - High Speed</div>
-<div class="server">USA Node - Ultra Fast</div>
-</div>
-</section>
-
-<section class="contact" id="contact">
-<h2>Contact Us</h2>
-<form>
-<input placeholder="Name">
-<input placeholder="Email">
-<textarea placeholder="Message"></textarea>
-<button class="btn">Send</button>
-</form>
 </section>
 
 <footer>
 © 2026 SDX NODES Hosting
 </footer>
-
-<script>
-let pkr=document.getElementById("pkr")
-let inr=document.getElementById("inr")
-let prices=document.querySelectorAll(".price")
-
-pkr.onclick=()=>{
-pkr.classList.add("active")
-inr.classList.remove("active")
-prices.forEach(p=>p.innerText="PKR "+p.dataset.pkr)
-}
-
-inr.onclick=()=>{
-inr.classList.add("active")
-pkr.classList.remove("active")
-prices.forEach(p=>p.innerText="INR "+p.dataset.inr)
-}
-</script>
 
 </body>
 </html>
