@@ -2,42 +2,88 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>car biTz h9</title>
+<title>Sdx Carts</title>
+
 <style>
-body{margin:0;overflow:hidden;background:#0c0c0c;font-family:sans-serif}
-.menu,.lose{
+body{margin:0;overflow:hidden;background:#0a0a0a;font-family:sans-serif}
+
+/* SCREENS */
+.screen{
 position:absolute;top:0;left:0;width:100%;height:100%;
-display:flex;flex-direction:column;align-items:center;justify-content:center;
-background:#111;color:white;z-index:5}
-.lose{background:rgba(0,0,0,0.7);display:none}
-button{padding:12px 20px;margin:10px;font-size:18px;border:none;border-radius:10px}
-#speed{position:absolute;top:10px;right:10px;color:white;z-index:2}
-#info{position:absolute;top:10px;left:10px;color:white;z-index:2}
+display:flex;flex-direction:column;
+align-items:center;justify-content:center;
+background:#111;color:white;z-index:10}
+
+.hidden{display:none}
+
+button{
+padding:12px 20px;
+margin:8px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#333;
+color:white}
+
+/* UI */
+#uiTopLeft{
+position:absolute;
+top:10px;left:10px;
+color:white;z-index:5}
+
+#uiTopRight{
+position:absolute;
+top:10px;right:10px;
+color:white;z-index:5}
+
+/* CONTROLS */
 .ctrl{
-position:absolute;width:70px;height:70px;
+position:absolute;
+width:70px;height:70px;
 background:rgba(255,255,255,0.2);
-color:white;font-size:28px;
-display:flex;align-items:center;justify-content:center;border-radius:12px;z-index:3}
+color:white;
+font-size:30px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:12px;
+z-index:6}
+
 #left{bottom:90px;left:20px}
 #right{bottom:90px;left:110px}
 #up{bottom:140px;right:20px}
 #down{bottom:50px;right:20px}
 </style>
 </head>
+
 <body>
 
-<div id="menu" class="menu">
-<h1>car biTz </h1>
-<button onclick="startGame()">Start Game</button>
+<div id="menu" class="screen">
+<h1>car biTz h9</h1>
+<button onclick="startGame()">Start</button>
+<button onclick="openShop()">Shop</button>
 </div>
 
-<div id="lose" class="lose">
+<div id="shop" class="screen hidden">
+<h2>Shop</h2>
+<div id="shopList"></div>
+<button onclick="backMenu()">Back</button>
+</div>
+
+<div id="lose" class="screen hidden">
 <h2>You Crashed!</h2>
-<button onclick="location.reload()">Restart</button>
+<button onclick="restart()">Restart</button>
+<button onclick="location.reload()">Main Menu</button>
 </div>
 
-<div id="info">Crashes:<span id="cr">0</span> Coins:<span id="coinUI">0</span></div>
-<div id="speed">Speed:0</div>
+<div id="uiTopLeft">
+Crashes:<span id="cr">0</span>
+Coins:<span id="coinUI">0</span>
+</div>
+
+<div id="uiTopRight">
+Speed:<span id="spd">0</span>
+</div>
 
 <div id="left" class="ctrl">←</div>
 <div id="right" class="ctrl">→</div>
@@ -47,18 +93,61 @@ display:flex;align-items:center;justify-content:center;border-radius:12px;z-inde
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
 <script>
-let scene,camera,renderer,car;
-let speed=0,crashes=0,coins=0;
-let keys={},obstacles=[],coinObjs=[];
-let equipped=0;
+
+/* DATA */
 
 let cars=[
-{name:"Starter",top:0.5,color:0xff4444},
-{name:"Sport",top:0.7,color:0x44ff44},
-{name:"Hyper",top:1.0,color:0x4444ff}
+{name:"Starter",speed:0.5,color:0xff4444,owned:true},
+{name:"Sport",speed:0.7,color:0x44ff44,price:13000,owned:false},
+{name:"Hyper",speed:1.0,color:0x4444ff,price:22000,owned:false}
 ];
 
-function makeCarModel(){
+let equipped=0;
+let coins=0;
+
+/* SHOP */
+
+function openShop(){
+menu.classList.add("hidden");
+shop.classList.remove("hidden");
+
+shopList.innerHTML="";
+cars.forEach((c,i)=>{
+
+let btn=document.createElement("button");
+
+if(!c.owned)
+btn.innerText=`Buy ${c.name} ${c.price}`;
+else if(equipped==i)
+btn.innerText=`Equipped ${c.name}`;
+else
+btn.innerText=`Equip ${c.name}`;
+
+btn.onclick=()=>{
+if(!c.owned && coins>=c.price){
+coins-=c.price;
+c.owned=true;
+}
+if(c.owned) equipped=i;
+openShop();
+};
+
+shopList.appendChild(btn);
+});
+}
+
+function backMenu(){
+shop.classList.add("hidden");
+menu.classList.remove("hidden");
+}
+
+/* THREE GAME */
+
+let scene,camera,renderer,car;
+let keys={},speed=0,crashes=0;
+let obstacles=[],coinObjs=[];
+
+function makeCar(){
 let g=new THREE.Group();
 
 let body=new THREE.Mesh(
@@ -69,7 +158,7 @@ body.position.y=1;
 g.add(body);
 
 let top=new THREE.Mesh(
-new THREE.BoxGeometry(2.5,1,2.5),
+new THREE.BoxGeometry(2,1,2),
 new THREE.MeshStandardMaterial({color:0xffffff})
 );
 top.position.set(0,2,0);
@@ -80,22 +169,30 @@ return g;
 
 function startGame(){
 
-menu.style.display="none";
+menu.classList.add("hidden");
+shop.classList.add("hidden");
 
 scene=new THREE.Scene();
 scene.background=new THREE.Color(0x87ceeb);
 
-camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
+camera=new THREE.PerspectiveCamera(
+75,
+innerWidth/innerHeight,
+0.1,
+1000
+);
+
 renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);
 document.body.appendChild(renderer.domElement);
 
 scene.add(new THREE.AmbientLight(0xffffff,0.6));
+
 let sun=new THREE.DirectionalLight(0xffffff,1);
 sun.position.set(50,100,50);
 scene.add(sun);
 
-car=makeCarModel();
+car=makeCar();
 scene.add(car);
 
 generateRoad(0);
@@ -103,22 +200,29 @@ generateRoad(0);
 animate();
 }
 
-function generateRoad(zStart){
+/* ROAD */
+
+function generateRoad(startZ){
+
 for(let i=0;i<10;i++){
-let z=zStart-(i*80);
+
+let z=startZ-(i*80);
 
 let road=new THREE.Mesh(
 new THREE.PlaneGeometry(20,80),
 new THREE.MeshStandardMaterial({color:0x222222})
 );
+
 road.rotation.x=-Math.PI/2;
 road.position.z=z;
 scene.add(road);
 
+/* BARRIERS */
 let barrierL=new THREE.Mesh(
 new THREE.BoxGeometry(2,3,80),
 new THREE.MeshStandardMaterial({color:0xffff00})
 );
+
 barrierL.position.set(-12,1.5,z);
 scene.add(barrierL);
 
@@ -126,40 +230,62 @@ let barrierR=barrierL.clone();
 barrierR.position.x=12;
 scene.add(barrierR);
 
+/* OBSTACLES */
 if(Math.random()<0.7){
+
 let box=new THREE.Mesh(
 new THREE.BoxGeometry(3,3,3),
 new THREE.MeshStandardMaterial({color:0xffaa00})
 );
-box.position.set((Math.random()*10)-5,1.5,z-20);
+
+box.position.set(
+(Math.random()*10)-5,
+1.5,
+z-20
+);
+
 scene.add(box);
 obstacles.push(box);
 }
 
+/* COINS */
 for(let c=0;c<3;c++){
+
 let coin=new THREE.Mesh(
 new THREE.CylinderGeometry(1,1,0.3,12),
 new THREE.MeshStandardMaterial({color:0xffff00})
 );
+
 coin.rotation.x=Math.PI/2;
-coin.position.set((Math.random()*10)-5,1,z-(c*10));
+
+coin.position.set(
+(Math.random()*10)-5,
+1,
+z-(c*10)
+);
+
 scene.add(coin);
 coinObjs.push(coin);
 }
 }
 }
 
+/* CONTROLS */
+
 ["left","right","up","down"].forEach(id=>{
 document.getElementById(id).ontouchstart=()=>keys[id]=true;
 document.getElementById(id).ontouchend=()=>keys[id]=false;
 });
 
+/* UPDATE */
+
 function update(){
 
-let top=cars[equipped].top;
+let top=cars[equipped].speed;
 
 if(keys.up)speed+=0.02;
 if(keys.down)speed-=0.02;
+
 speed=Math.max(Math.min(speed,top),-top);
 speed*=0.98;
 
@@ -172,12 +298,14 @@ car.position.z+=Math.cos(car.rotation.y)*speed*10;
 if(car.position.x<-10)car.position.x=-10;
 if(car.position.x>10)car.position.x=10;
 
+/* COLLISIONS */
+
 obstacles.forEach(o=>{
 if(car.position.distanceTo(o.position)<3){
 crashes++;
 cr.innerText=crashes;
 speed*=-0.5;
-if(crashes>=3)lose.style.display="flex";
+if(crashes>=3)lose.classList.remove("hidden");
 }
 });
 
@@ -189,19 +317,19 @@ coinUI.innerText=coins;
 }
 });
 
-if(car.position.z<-500){
+/* ENDLESS */
+if(car.position.z<-500)
 generateRoad(car.position.z-200);
-}
 
 camera.position.set(
 car.position.x- Math.sin(car.rotation.y)*15,
 10,
 car.position.z- Math.cos(car.rotation.y)*15
 );
+
 camera.lookAt(car.position);
 
-speedEl=document.getElementById("speed");
-speedEl.innerText="Speed:"+Math.floor(Math.abs(speed*200));
+spd.innerText=Math.floor(Math.abs(speed*200));
 }
 
 function animate(){
@@ -209,6 +337,11 @@ requestAnimationFrame(animate);
 update();
 renderer.render(scene,camera);
 }
+
+function restart(){
+location.reload();
+}
+
 </script>
 </body>
 </html>
