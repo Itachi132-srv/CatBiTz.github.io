@@ -1,211 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SDX NODES - Premium Server Hosting</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* Reset & basic */
-    * {margin:0; padding:0; box-sizing:border-box;}
-    body {font-family: 'Poppins', sans-serif; background:#111; color:#fff; line-height:1.6;}
-    a {text-decoration:none; color:inherit;}
-    img {max-width:100%; display:block;}
-    
-    /* Container */
-    .container {width:90%; max-width:1200px; margin:0 auto;}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDX NODES Hosting</title>
 
-    /* Navbar */
-    nav {display:flex; justify-content:space-between; align-items:center; padding:20px 0;}
-    nav .logo {font-size:28px; font-weight:700; color:orange; letter-spacing:2px;}
-    nav ul {display:flex; gap:25px; list-style:none;}
-    nav ul li a {font-weight:600; transition:0.3s;}
-    nav ul li a:hover {color:orange;}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-    /* Hero Section */
-    .hero {display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; height:90vh; background:linear-gradient(135deg, #ff6700, #ff3300); overflow:hidden; position:relative;}
-    .hero h1 {font-size:60px; font-weight:700; margin-bottom:20px; color:white; animation:fadeInUp 1s ease forwards;}
-    .hero p {font-size:20px; margin-bottom:30px; animation:fadeInUp 1.2s ease forwards;}
-    .hero .btn {padding:15px 35px; background:orange; color:#fff; font-weight:600; border-radius:50px; transition:0.3s;}
-    .hero .btn:hover {background:#ff3300;}
-    
-    /* Animations */
-    @keyframes fadeInUp {
-      0% {opacity:0; transform:translateY(50px);}
-      100% {opacity:1; transform:translateY(0);}
-    }
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Poppins;background:#0e0e0e;color:#fff}
+a{text-decoration:none;color:white}
+section{padding:80px 10%}
 
-    /* Features */
-    .features {padding:80px 0; background:#1a1a1a;}
-    .features h2 {text-align:center; font-size:40px; margin-bottom:60px; color:orange;}
-    .features-grid {display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:30px;}
-    .feature {background:#222; padding:30px; border-radius:10px; transition:0.3s; text-align:center;}
-    .feature:hover {background:orange; color:#111;}
-    .feature h3 {margin:20px 0; font-size:22px;}
-    .feature p {font-size:16px;}
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 10%;
+background:#111;
+position:sticky;
+top:0;
+}
+.logo{color:orange;font-size:28px;font-weight:700}
+nav ul{display:flex;gap:25px;list-style:none}
+nav ul li a:hover{color:orange}
 
-    /* Pricing */
-    .pricing {padding:80px 0;}
-    .pricing h2 {text-align:center; font-size:40px; margin-bottom:60px; color:orange;}
-    .pricing-grid {display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:30px;}
-    .plan {background:#222; padding:30px; border-radius:10px; text-align:center; transition:0.3s;}
-    .plan:hover {transform:translateY(-10px); background:orange; color:#111;}
-    .plan h3 {font-size:24px; margin-bottom:15px;}
-    .plan p {margin-bottom:15px;}
-    .plan .price {font-size:28px; font-weight:700; margin-bottom:20px;}
+.hero{
+height:90vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+background:#151515;
+animation:fadeUp 1s ease;
+}
+.hero h1{font-size:60px;color:orange;margin-bottom:20px}
+.hero p{font-size:20px;margin-bottom:25px}
 
-    /* Servers */
-    .servers {padding:80px 0; background:#1a1a1a;}
-    .servers h2 {text-align:center; font-size:40px; margin-bottom:60px; color:orange;}
-    .servers-grid {display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:30px;}
-    .server {background:#222; padding:20px; border-radius:10px; transition:0.3s;}
-    .server:hover {background:orange; color:#111;}
-    .server h3 {margin-bottom:10px;}
-    .server p {font-size:14px;}
+.btn{
+background:orange;
+padding:14px 30px;
+border-radius:40px;
+font-weight:600;
+color:#111;
+transition:.3s;
+border:none;
+cursor:pointer;
+}
+.btn:hover{background:#ff6a00}
 
-    /* Testimonials */
-    .testimonials {padding:80px 0;}
-    .testimonials h2 {text-align:center; font-size:40px; margin-bottom:60px; color:orange;}
-    .testimonial {background:#222; padding:30px; border-radius:10px; margin-bottom:30px; transition:0.3s;}
-    .testimonial:hover {background:orange; color:#111;}
-    .testimonial p {margin-bottom:10px;}
-    .testimonial span {font-weight:600;}
+@keyframes fadeUp{
+0%{opacity:0;transform:translateY(40px)}
+100%{opacity:1;transform:translateY(0)}
+}
 
-    /* Contact */
-    .contact {padding:80px 0; background:#1a1a1a;}
-    .contact h2 {text-align:center; font-size:40px; margin-bottom:60px; color:orange;}
-    .contact form {max-width:600px; margin:0 auto; display:flex; flex-direction:column; gap:20px;}
-    .contact input, .contact textarea {padding:15px; border-radius:8px; border:none;}
-    .contact button {padding:15px; background:orange; color:#111; font-weight:600; border-radius:50px; cursor:pointer; transition:0.3s;}
-    .contact button:hover {background:#ff3300;}
+.plans h2{text-align:center;color:orange;font-size:40px;margin-bottom:40px}
 
-    /* Footer */
-    footer {background:#111; text-align:center; padding:20px 0; color:#888;}
-  </style>
+.toggle{text-align:center;margin-bottom:30px}
+.toggle button{
+padding:10px 20px;
+border:none;
+margin:5px;
+border-radius:30px;
+font-weight:600;
+cursor:pointer;
+}
+.active{background:orange;color:#111}
+
+.plans-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
+}
+
+.plan{
+background:#1a1a1a;
+padding:25px;
+border-radius:12px;
+text-align:center;
+transition:.3s;
+}
+.plan:hover{
+transform:translateY(-10px);
+box-shadow:0 0 20px orange;
+}
+
+.plan img{
+width:100%;
+height:160px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+.price{font-size:28px;font-weight:700;margin:15px 0;color:orange}
+
+.servers h2{text-align:center;color:orange;margin-bottom:40px}
+.server-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+.server{
+background:#1a1a1a;
+padding:25px;
+border-radius:10px;
+transition:.3s;
+}
+.server:hover{box-shadow:0 0 15px orange}
+
+.contact h2{text-align:center;color:orange;margin-bottom:40px}
+form{max-width:500px;margin:auto;display:flex;flex-direction:column;gap:15px}
+input,textarea{padding:12px;border-radius:8px;border:none}
+
+footer{text-align:center;padding:20px;background:#111;color:#aaa}
+</style>
 </head>
+
 <body>
-  <!-- Navbar -->
-  <nav class="container">
-    <div class="logo">SDX NODES</div>
-    <ul>
-      <li><a href="#features">Features</a></li>
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#servers">Servers</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1>Premium Server Hosting</h1>
-    <p>Reliable, Fast, and Scalable Hosting for All Your Needs</p>
-    <a href="#pricing" class="btn">Get Started</a>
-  </section>
+<nav>
+<div class="logo">SDX NODES</div>
+<ul>
+<li><a href="#">Home</a></li>
+<li><a href="#plans">Plans</a></li>
+<li><a href="#servers">Servers</a></li>
+<li><a href="#contact">Contact</a></li>
+</ul>
+</nav>
 
-  <!-- Features -->
-  <section class="features" id="features">
-    <div class="container">
-      <h2>Our Features</h2>
-      <div class="features-grid">
-        <div class="feature">
-          <h3>High Performance</h3>
-          <p>Ultra-fast servers with 99.99% uptime guarantee.</p>
-        </div>
-        <div class="feature">
-          <h3>24/7 Support</h3>
-          <p>Dedicated support team available anytime.</p>
-        </div>
-        <div class="feature">
-          <h3>Secure & Reliable</h3>
-          <p>Advanced security features to protect your data.</p>
-        </div>
-        <div class="feature">
-          <h3>Easy Management</h3>
-          <p>User-friendly control panel for effortless management.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+<section class="hero">
+<h1>SDX NODES Hosting</h1>
+<p>Fast • Secure • Professional Hosting Solutions</p>
+<a href="#plans" class="btn">View Plans</a>
+</section>
 
-  <!-- Pricing -->
-  <section class="pricing" id="pricing">
-    <div class="container">
-      <h2>Pricing Plans</h2>
-      <div class="pricing-grid">
-        <div class="plan">
-          <h3>Basic</h3>
-          <p>Perfect for small projects</p>
-          <div class="price">$5/month</div>
-          <a href="#" class="btn">Buy Now</a>
-        </div>
-        <div class="plan">
-          <h3>Pro</h3>
-          <p>For growing businesses</p>
-          <div class="price">$15/month</div>
-          <a href="#" class="btn">Buy Now</a>
-        </div>
-        <div class="plan">
-          <h3>Enterprise</h3>
-          <p>Full-featured solution</p>
-          <div class="price">$30/month</div>
-          <a href="#" class="btn">Buy Now</a>
-        </div>
-      </div>
-    </div>
-  </section>
+<section class="plans" id="plans">
+<h2>Hosting Plans</h2>
 
-  <!-- Servers -->
-  <section class="servers" id="servers">
-    <div class="container">
-      <h2>Our Servers</h2>
-      <div class="servers-grid">
-        <div class="server">
-          <h3>US-East</h3>
-          <p>Low latency and fast connectivity across USA.</p>
-        </div>
-        <div class="server">
-          <h3>Europe</h3>
-          <p>High-speed servers in the heart of Europe.</p>
-        </div>
-        <div class="server">
-          <h3>Asia</h3>
-          <p>Optimized servers for the Asian region.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="toggle">
+<button id="pkr" class="active">PKR</button>
+<button id="inr">INR</button>
+</div>
 
-  <!-- Testimonials -->
-  <section class="testimonials">
-    <div class="container">
-      <h2>What Our Clients Say</h2>
-      <div class="testimonial">
-        <p>"SDX NODES has transformed my business hosting experience."</p>
-        <span>- John D.</span>
-      </div>
-      <div class="testimonial">
-        <p>"Reliable servers and amazing support team!"</p>
-        <span>- Sarah K.</span>
-      </div>
-    </div>
-  </section>
+<div class="plans-grid">
 
-  <!-- Contact -->
-  <section class="contact" id="contact">
-    <div class="container">
-      <h2>Contact Us</h2>
-      <form>
-        <input type="text" placeholder="Your Name" required>
-        <input type="email" placeholder="Your Email" required>
-        <textarea placeholder="Your Message" rows="5" required></textarea>
-        <button type="submit">Send Message</button>
-      </form>
-    </div>
-  </section>
+<div class="plan">
+<img src="grass.png">
+<h3>Grass Plan</h3>
+<p>2GB RAM • 100% CPU</p>
+<div class="price" data-pkr="100" data-inr="31">PKR 100</div>
+<button class="btn">Buy</button>
+</div>
 
-  <!-- Footer -->
-  <footer>
-    &copy; 2026 SDX NODES. All rights reserved.
-  </footer>
+<div class="plan">
+<img src="stone.png">
+<h3>Stone Plan</h3>
+<p>4GB RAM • 100% CPU</p>
+<div class="price" data-pkr="170" data-inr="53">PKR 170</div>
+<button class="btn">Buy</button>
+</div>
+
+<div class="plan">
+<img src="iron.png">
+<h3>Iron Plan</h3>
+<p>6GB RAM • 100% CPU</p>
+<div class="price" data-pkr="250" data-inr="78">PKR 250</div>
+<button class="btn">Buy</button>
+</div>
+
+<div class="plan">
+<img src="gold.png">
+<h3>Gold Plan</h3>
+<p>8GB RAM • 100% CPU</p>
+<div class="price" data-pkr="400" data-inr="124">PKR 400</div>
+<button class="btn">Buy</button>
+</div>
+
+<div class="plan">
+<img src="diamond.png">
+<h3>Diamond Plan</h3>
+<p>10GB RAM • 100% CPU</p>
+<div class="price" data-pkr="800" data-inr="248">PKR 800</div>
+<button class="btn">Buy</button>
+</div>
+
+</div>
+</section>
+
+<section class="servers" id="servers">
+<h2>Server Locations</h2>
+<div class="server-grid">
+<div class="server">Pakistan Node - Low Ping</div>
+<div class="server">India Node - Stable</div>
+<div class="server">Europe Node - High Speed</div>
+<div class="server">USA Node - Ultra Fast</div>
+</div>
+</section>
+
+<section class="contact" id="contact">
+<h2>Contact Us</h2>
+<form>
+<input placeholder="Name">
+<input placeholder="Email">
+<textarea placeholder="Message"></textarea>
+<button class="btn">Send</button>
+</form>
+</section>
+
+<footer>
+© 2026 SDX NODES Hosting
+</footer>
+
+<script>
+let pkr=document.getElementById("pkr")
+let inr=document.getElementById("inr")
+let prices=document.querySelectorAll(".price")
+
+pkr.onclick=()=>{
+pkr.classList.add("active")
+inr.classList.remove("active")
+prices.forEach(p=>p.innerText="PKR "+p.dataset.pkr)
+}
+
+inr.onclick=()=>{
+inr.classList.add("active")
+pkr.classList.remove("active")
+prices.forEach(p=>p.innerText="INR "+p.dataset.inr)
+}
+</script>
+
 </body>
 </html>
