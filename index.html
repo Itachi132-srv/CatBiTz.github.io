@@ -1,48 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>City Drive Pro</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>car biTz h9</title>
 <style>
-body{margin:0;overflow:hidden;background:#87ceeb;font-family:Arial}
-#menu{
-  position:fixed;inset:0;background:#000000cc;color:white;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px
+body { margin:0; overflow:hidden; background:black; }
+#ui{
+position:absolute;top:10px;left:10px;
+color:white;font-family:sans-serif;
+background:rgba(0,0,0,0.5);
+padding:10px;border-radius:10px;
 }
-button{padding:12px 22px;font-size:18px}
-#ui{position:fixed;top:10px;left:10px;color:white}
-.controls{
-  position:fixed;bottom:0;width:100%;display:flex;justify-content:space-between;padding:20px;box-sizing:border-box
-}
-.ctrl{background:#ffffff22;border:none;color:white;font-size:20px;padding:15px}
 </style>
 </head>
 <body>
+<div id="ui">🚗 car biTz h9<br>Crashes: <span id="crash">0</span></div>
 
-<div id="menu">
-<h1>CITY DRIVE PRO</h1>
-<button onclick="startGame()">START GAME</button>
-<button onclick="rotateScreen()">ROTATE SCREEN</button>
-<div id="loading" style="margin-top:10px;display:none;color:white;">Loading car...</div>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
-<div id="ui">Speed:<span id="spd">0</span> Score:<span id="score">0</span> HP:<span id="hp">100</span></div>
+<script>
+let scene=new THREE.Scene();
+scene.background=new THREE.Color(0x223344);
 
-<div class="controls">
-<div>
-<button class="ctrl" ontouchstart="keys.left=1" ontouchend="keys.left=0">◀</button>
-<button class="ctrl" ontouchstart="keys.right=1" ontouchend="keys.right=0">▶</button>
-</div>
-<div>
-<button class="ctrl" ontouchstart="keys.up=1" ontouchend="keys.up=0">▲</button>
-<button class="ctrl" ontouchstart="keys.down=1" ontouchend="keys.down=0">▼</button>
-<button class="ctrl" ontouchstart="keys.nitro=1" ontouchend="keys.nitro=0">⚡</button>
-</div>
-</div>
+let camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
+let renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+document.body.appendChild(renderer.domElement);
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="game.js"></script>
+let light=new THREE.DirectionalLight(0xffffff,1);
+light.position.set(10,20,10);
+scene.add(light);
+scene.add(new THREE.AmbientLight(0x888888));
+
+let ground=new THREE.Mesh(
+new THREE.PlaneGeometry(500,500),
+new THREE.MeshStandardMaterial({color:0x2ecc71})
+);
+ground.rotation.x=-Math.PI/2;
+scene.add(ground);
+
+let buildings=[];
+for(let i=0;i<40;i++){
+let b=new THREE.Mesh(
+new THREE.BoxGeometry(10,Math.random()*20+10,10),
+new THREE.MeshStandardMaterial({color:Math.random()*0xffffff})
+);
+b.position.set((Math.random()-0.5)*200,5,(Math.random()-0.5)*200);
+scene.add(b);
+buildings.push(b);
+}
+
+let car=new THREE.Group();
+
+let body=new THREE.Mesh(
+new THREE.BoxGeometry(4,1.5,8),
+new THREE.MeshStandardMaterial({color:0xff3333})
+);
+body.position.y=1;
+car.add(body);
+
+let cabin=new THREE.Mesh(
+new THREE.BoxGeometry(3,1.5,3),
+new THREE.MeshStandardMaterial({color:0x3333ff})
+);
+cabin.position.set(0,2,0);
+car.add(cabin);
+
+scene.add(car);
+
+let speed=0;
+let turn=0;
+let crashes=0;
+let keys={};
+
+document.addEventListener("keydown",e=>keys[e.key]=true);
+document.addEventListener("keyup",e=>keys[e.key]=false);
+
+function explode(){
+let geo=new THREE.SphereGeometry(2,16,16);
+let mat=new THREE.MeshBasicMaterial({color:0xffaa00});
+let boom=new THREE.Mesh(geo,mat);
+boom.position.copy(car.position);
+scene.add(boom);
+setTimeout(()=>scene.remove(boom),500);
+car.position.set(0,0,0);
+speed=0;
+crashes=0;
+}
+
+function update(){
+if(keys["w"]||keys["ArrowUp"]) speed+=0.02;
+if(keys["s"]||keys["ArrowDown"]) speed-=0.02;
+if(keys["a"]||keys["ArrowLeft"]) turn=0.03;
+else if(keys["d"]||keys["ArrowRight"]) turn=-0.03;
+else turn=0;
+
+speed*=0.98;
+
+car.rotation.y+=turn*(speed*5);
+car.position.x+=Math.sin(car.rotation.y)*speed*2;
+car.position.z+=Math.cos(car.rotation.y)*speed*2;
+
+for(let b of buildings){
+if(car.position.distanceTo(b.position)<6){
+crashes++;
+document.getElementById("crash").innerText=crashes;
+car.position.x-=Math.sin(car.rotation.y)*2;
+car.position.z-=Math.cos(car.rotation.y)*2;
+if(crashes>=3) explode();
+}
+}
+
+camera.position.x=car.position.x- Math.sin(car.rotation.y)*15;
+camera.position.z=car.position.z- Math.cos(car.rotation.y)*15;
+camera.position.y=10;
+camera.lookAt(car.position);
+}
+
+function animate(){
+requestAnimationFrame(animate);
+update();
+renderer.render(scene,camera);
+}
+animate();
+
+onresize=()=>{
+camera.aspect=innerWidth/innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(innerWidth,innerHeight);
+};
+</script>
 </body>
 </html>
