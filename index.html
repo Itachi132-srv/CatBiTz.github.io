@@ -4,16 +4,28 @@
 <meta charset="UTF-8">
 <title>car biTz h9</title>
 <style>
-body{margin:0;overflow:hidden;background:black}
-#ui{
-position:absolute;top:10px;left:10px;
-color:white;font-family:sans-serif;
-background:rgba(0,0,0,0.5);
-padding:10px;border-radius:10px}
+body{margin:0;overflow:hidden;background:black;font-family:sans-serif}
+#ui{position:absolute;top:10px;left:10px;color:white;background:rgba(0,0,0,0.5);padding:8px;border-radius:8px}
+.btn{
+position:absolute;width:60px;height:60px;
+background:rgba(255,255,255,0.2);
+color:white;font-size:25px;
+display:flex;align-items:center;justify-content:center;
+border-radius:10px;user-select:none}
+#up{bottom:120px;left:80px}
+#down{bottom:40px;left:80px}
+#left{bottom:80px;left:10px}
+#right{bottom:80px;left:150px}
 </style>
 </head>
 <body>
+
 <div id="ui">car biTz h9<br>Crashes: <span id="crash">0</span></div>
+
+<div id="up" class="btn">↑</div>
+<div id="down" class="btn">↓</div>
+<div id="left" class="btn">←</div>
+<div id="right" class="btn">→</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
@@ -52,42 +64,56 @@ road(0,0,400,40);
 
 let buildings=[];
 for(let i=-180;i<=180;i+=40){
-let b1=new THREE.Mesh(
+let b=new THREE.Mesh(
 new THREE.BoxGeometry(20,20+Math.random()*30,20),
 new THREE.MeshStandardMaterial({color:Math.random()*0xffffff})
 );
-b1.position.set(60,b1.geometry.parameters.height/2,i);
-scene.add(b1);buildings.push(b1);
+b.position.set(60,b.geometry.parameters.height/2,i);
+scene.add(b);buildings.push(b);
 
-let b2=b1.clone();
-b2.position.x=-60;
+let b2=b.clone();b2.position.x=-60;
 scene.add(b2);buildings.push(b2);
 }
 
 let car=new THREE.Group();
-
 let body=new THREE.Mesh(
 new THREE.BoxGeometry(4,1.5,8),
 new THREE.MeshStandardMaterial({color:0xff4444})
 );
-body.position.y=1;
-car.add(body);
+body.position.y=1;car.add(body);
 
 let topc=new THREE.Mesh(
 new THREE.BoxGeometry(3,1.5,3),
 new THREE.MeshStandardMaterial({color:0x1111ff})
 );
-topc.position.set(0,2,0);
-car.add(topc);
-
+topc.position.set(0,2,0);car.add(topc);
 scene.add(car);
 
-let speed=0;
-let crashes=0;
-let keys={};
+let speed=0,crashes=0;
+let keys={up:false,down:false,left:false,right:false};
 
-document.addEventListener("keydown",e=>keys[e.key]=true);
-document.addEventListener("keyup",e=>keys[e.key]=false);
+document.addEventListener("keydown",e=>{
+if(e.key=="w"||e.key=="ArrowUp")keys.up=true;
+if(e.key=="s"||e.key=="ArrowDown")keys.down=true;
+if(e.key=="a"||e.key=="ArrowLeft")keys.left=true;
+if(e.key=="d"||e.key=="ArrowRight")keys.right=true;
+});
+document.addEventListener("keyup",e=>{
+if(e.key=="w"||e.key=="ArrowUp")keys.up=false;
+if(e.key=="s"||e.key=="ArrowDown")keys.down=false;
+if(e.key=="a"||e.key=="ArrowLeft")keys.left=false;
+if(e.key=="d"||e.key=="ArrowRight")keys.right=false;
+});
+
+function touch(id,key){
+let el=document.getElementById(id);
+el.ontouchstart=()=>keys[key]=true;
+el.ontouchend=()=>keys[key]=false;
+}
+touch("up","up");
+touch("down","down");
+touch("left","left");
+touch("right","right");
 
 function explode(){
 let boom=new THREE.Mesh(
@@ -98,19 +124,16 @@ boom.position.copy(car.position);
 scene.add(boom);
 setTimeout(()=>scene.remove(boom),500);
 car.position.set(0,0,0);
-speed=0;
-crashes=0;
+speed=0;crashes=0;
 }
 
 function update(){
-if(keys["w"]||keys["ArrowUp"]) speed+=0.03;
-if(keys["s"]||keys["ArrowDown"]) speed-=0.03;
+if(keys.up)speed+=0.03;
+if(keys.down)speed-=0.03;
 speed*=0.97;
 
-if(keys["a"]||keys["ArrowLeft"])
-car.rotation.y+=0.04*(speed*3);
-if(keys["d"]||keys["ArrowRight"])
-car.rotation.y-=0.04*(speed*3);
+if(keys.left)car.rotation.y+=0.04*(speed*3);
+if(keys.right)car.rotation.y-=0.04*(speed*3);
 
 car.position.x+=Math.sin(car.rotation.y)*speed*2;
 car.position.z+=Math.cos(car.rotation.y)*speed*2;
@@ -120,7 +143,7 @@ if(car.position.distanceTo(b.position)<12){
 crashes++;
 document.getElementById("crash").innerText=crashes;
 speed*=-0.5;
-if(crashes>=3) explode();
+if(crashes>=3)explode();
 }
 }
 
