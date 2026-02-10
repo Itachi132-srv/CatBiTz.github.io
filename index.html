@@ -1,44 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SDX NODES</title>
-
 <style>
-body{margin:0;font-family:Arial;background:#0e0e0e;color:#fff;scroll-behavior:smooth}
-nav{background:#111;padding:18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
-.logo{color:orange;font-size:22px;font-weight:bold}
-nav a{color:#fff;margin-left:20px;text-decoration:none}
-section{padding:80px 8%}
-.hero{height:85vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
-.btn{background:orange;color:#111;padding:12px 24px;border-radius:30px;text-decoration:none;font-weight:bold;transition:.3s}
-.btn:hover{transform:scale(1.05)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px;margin-top:30px}
-.card{background:#1a1a1a;padding:22px;border-radius:14px;position:relative;transition:.3s}
-.card:hover{transform:translateY(-6px);box-shadow:0 0 20px rgba(255,165,0,.4)}
-.card img{width:42px;position:absolute;top:15px;left:15px}
-.card h3{margin-top:35px}
-.currency{margin-top:20px}
-</style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#0e0e0e;color:#fff;scroll-behavior:smooth}
+nav{background:#111;padding:16px 6%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.logo{color:orange;font-size:22px;font-weight:700;white-space:nowrap}
+nav a{color:#fff;margin-left:20px;text-decoration:none;font-weight:600}
+nav a:hover{color:orange}
+
+section{padding:70px 6%}
+.hero{height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.hero h1{font-size:48px;color:orange;margin-bottom:15px}
+.hero p{font-size:20px;margin-bottom:20px}
+.btn{background:orange;color:#111;padding:12px 24px;text-decoration:none;border-radius:30px;font-weight:600;transition:.3s}
+.btn:hover{transform:scale(1.05)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:30px}
+.card{background:#1a1a1a;padding:18px;border-radius:14px;position:relative;transition:.3s}
+.card:hover{transform:translateY(-5px);box-shadow:0 0 20px rgba(255,165,0,0.4)}
+.card img{width:38px;position:absolute;top:15px;left:15px}
+.card h3{margin-top:35px;font-size:20px}
+.price{color:orange;font-size:18px;margin-top:10px}
+
+.currency{margin-top:20px}
+.currency button{background:#222;color:#fff;padding:8px 18px;border:none;border-radius:20px;margin-right:8px;cursor:pointer}
+.currency button.active{background:orange;color:#111}
+
+@media(max-width:768px){
+.hero h1{font-size:36px}
+.hero p{font-size:16px}
+.card h3{font-size:18px}
+.card img{width:32px;height:32px}
+}
+</style>
 <script>
 let currency="PKR";
 function switchCurrency(val){
 currency=val;
-updatePrices();
-}
-function updatePrices(){
+document.querySelectorAll(".currency button").forEach(b=>b.classList.remove("active"));
+document.getElementById(val).classList.add("active");
 document.querySelectorAll(".price").forEach(el=>{
 let pkr=el.getAttribute("data-pkr");
 let inr=el.getAttribute("data-inr");
-el.innerText=(currency=="PKR"?"PKR "+pkr:"INR "+inr);
+el.innerText=currency=="PKR"?"PKR "+pkr:"INR "+inr;
 });
 }
 </script>
-
 </head>
-
-<body onload="updatePrices()">
+<body onload="switchCurrency('PKR')">
 
 <nav>
 <div class="logo">SDX NODES</div>
@@ -52,18 +67,16 @@ el.innerText=(currency=="PKR"?"PKR "+pkr:"INR "+inr);
 
 <section id="home" class="hero">
 <h1>Professional Server Hosting</h1>
-<p>Fast Secure Powerful Nodes</p>
+<p>Fast, Secure, and Reliable Nodes</p>
 <a href="#plans" class="btn">View Plans</a>
 </section>
 
 <section id="plans">
 <h1>Hosting Plans</h1>
-
 <div class="currency">
-<button class="btn" onclick="switchCurrency('PKR')">PKR</button>
-<button class="btn" onclick="switchCurrency('INR')">INR</button>
+<button id="PKR" onclick="switchCurrency('PKR')">PKR</button>
+<button id="INR" onclick="switchCurrency('INR')">INR</button>
 </div>
-
 <div class="grid">
 
 <div class="card">
