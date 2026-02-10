@@ -1,129 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SDX NODES Hosting</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>SDX NODES</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Poppins;background:#0f0f0f;color:#fff}
-
-nav{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px 10%;
-background:#111;
-position:sticky;
-top:0;
-}
-
-.logo{color:orange;font-size:28px;font-weight:700}
-
-nav ul{display:flex;gap:25px;list-style:none}
-nav ul li a{color:white;text-decoration:none}
-nav ul li a:hover{color:orange}
-
-.hero{
-height:90vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-background:#141414;
-animation:fadeUp 1s ease;
-}
-
-.hero h1{font-size:60px;color:orange;margin-bottom:20px}
-.hero p{font-size:20px;margin-bottom:25px}
-
-.btn{
-background:orange;
-padding:14px 30px;
-border-radius:40px;
-font-weight:600;
-color:#111;
-text-decoration:none;
-transition:.3s;
-}
-.btn:hover{background:#ff6a00}
-
-.features{
-padding:80px 10%;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:25px;
-}
-
-.feature{
-background:#1a1a1a;
-padding:25px;
-border-radius:12px;
-transition:.3s;
-}
-.feature:hover{box-shadow:0 0 15px orange}
-
-footer{
-text-align:center;
-padding:20px;
-background:#111;
-color:#aaa;
-}
-
-@keyframes fadeUp{
-0%{opacity:0;transform:translateY(40px)}
-100%{opacity:1;transform:translateY(0)}
-}
+body{margin:0;font-family:Arial;background:#0e0e0e;color:#fff;scroll-behavior:smooth}
+nav{background:#111;padding:18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+.logo{color:orange;font-size:22px;font-weight:bold}
+nav a{color:#fff;margin-left:20px;text-decoration:none}
+section{padding:80px 8%}
+.hero{height:85vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.btn{background:orange;color:#111;padding:12px 24px;border-radius:30px;text-decoration:none;font-weight:bold;transition:.3s}
+.btn:hover{transform:scale(1.05)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px;margin-top:30px}
+.card{background:#1a1a1a;padding:22px;border-radius:14px;position:relative;transition:.3s}
+.card:hover{transform:translateY(-6px);box-shadow:0 0 20px rgba(255,165,0,.4)}
+.card img{width:42px;position:absolute;top:15px;left:15px}
+.card h3{margin-top:35px}
+.currency{margin-top:20px}
 </style>
+
+<script>
+let currency="PKR";
+function switchCurrency(val){
+currency=val;
+updatePrices();
+}
+function updatePrices(){
+document.querySelectorAll(".price").forEach(el=>{
+let pkr=el.getAttribute("data-pkr");
+let inr=el.getAttribute("data-inr");
+el.innerText=(currency=="PKR"?"PKR "+pkr:"INR "+inr);
+});
+}
+</script>
+
 </head>
 
-<body>
+<body onload="updatePrices()">
 
 <nav>
 <div class="logo">SDX NODES</div>
-<ul>
-<li><a href="index.html">Home</a></li>
-<li><a href="plans.html">Plans</a></li>
-<li><a href="servers.html">Servers</a></li>
-<li><a href="contact.html">Contact</a></li>
-</ul>
+<div>
+<a href="#home">Home</a>
+<a href="#plans">Plans</a>
+<a href="#servers">Servers</a>
+<a href="#contact">Contact</a>
+</div>
 </nav>
 
-<section class="hero">
-<h1>SDX NODES Hosting</h1>
-<p>High Performance • Low Latency • Professional Hosting</p>
-<a href="plans.html" class="btn">View Hosting Plans</a>
+<section id="home" class="hero">
+<h1>Professional Server Hosting</h1>
+<p>Fast Secure Powerful Nodes</p>
+<a href="#plans" class="btn">View Plans</a>
 </section>
 
-<section class="features">
-<div class="feature">
-<h3>⚡ High Performance</h3>
-<p>Powerful hardware with 100% CPU power.</p>
+<section id="plans">
+<h1>Hosting Plans</h1>
+
+<div class="currency">
+<button class="btn" onclick="switchCurrency('PKR')">PKR</button>
+<button class="btn" onclick="switchCurrency('INR')">INR</button>
 </div>
 
-<div class="feature">
-<h3>🛡 Secure Servers</h3>
-<p>Advanced protection and stable uptime.</p>
+<div class="grid">
+
+<div class="card">
+<img src="grass.png">
+<h3>Grass Plan</h3>
+<p>2GB RAM</p>
+<p>100% CPU</p>
+<p>24/7 Online</p>
+<p class="price" data-pkr="100" data-inr="30"></p>
 </div>
 
-<div class="feature">
-<h3>🌐 Global Nodes</h3>
-<p>Multiple server locations worldwide.</p>
+<div class="card">
+<img src="stone.png">
+<h3>Stone Plan</h3>
+<p>4GB RAM</p>
+<p>100% CPU</p>
+<p>24/7 Online</p>
+<p class="price" data-pkr="170" data-inr="50"></p>
 </div>
 
-<div class="feature">
-<h3>🎮 Easy Control Panel</h3>
-<p>Manage servers easily anytime.</p>
+<div class="card">
+<img src="iron.png">
+<h3>Iron Plan</h3>
+<p>6GB RAM</p>
+<p>100% CPU</p>
+<p>24/7 Online</p>
+<p class="price" data-pkr="250" data-inr="75"></p>
+</div>
+
+<div class="card">
+<img src="gold.png">
+<h3>Gold Plan</h3>
+<p>8GB RAM</p>
+<p>100% CPU</p>
+<p>24/7 Online</p>
+<p class="price" data-pkr="400" data-inr="120"></p>
+</div>
+
+<div class="card">
+<img src="diamond.png">
+<h3>Diamond Plan</h3>
+<p>10GB RAM</p>
+<p>100% CPU</p>
+<p>24/7 Online</p>
+<p class="price" data-pkr="800" data-inr="240"></p>
+</div>
+
 </div>
 </section>
 
-<footer>
-© 2026 SDX NODES Hosting
-</footer>
+<section id="servers">
+<h1>Servers</h1>
+<p>High performance nodes with stable uptime and fast deployment.</p>
+</section>
+
+<section id="contact">
+<h1>Contact</h1>
+<p>Email: example@email.com</p>
+<p>Discord: yourserver</p>
+</section>
 
 </body>
 </html>
