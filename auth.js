@@ -6,7 +6,7 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 // 🔴 APNA FIREBASE CONFIG DALNA
 const firebaseConfig = {
   apiKey: "AIzaSyC7DB_tKXjqLAjTgYueaHzWTwIkwc9CJaw",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  authDomain: "sdxnodes-46445.firebaseapp.com",
   projectId: "sdxnodes-46445",
   appId: "1:724836578713:web:c5055eaefb8d68dac28f08"
 };
