@@ -17,26 +17,40 @@ const auth = getAuth(app);
 
 // 🔹 SIGNUP
 export function signupUser(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("pass").value;
+  const name = document.getElementById("name").value;
+  const username = document.getElementById("username").value;
+  const email = document.getElementById("emailSign").value;
+  const pass = document.getElementById("passSign").value;
+
+  if(!name || !username || !email || !pass){ alert("All fields required!"); return; }
+
   createUserWithEmailAndPassword(auth,email,pass)
-    .then(()=>{alert("Signup Success!"); document.getElementById("auth").classList.remove("active"); document.getElementById("home").classList.add("active");})
+    .then(()=>{
+      alert("Signup Success!");
+      document.getElementById("auth").classList.remove("active");
+      document.getElementById("home").classList.add("active");
+    })
     .catch(e=>alert("Signup Error: "+e.message));
 }
 
 // 🔹 LOGIN
 export function loginUser(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("pass").value;
+  const email = document.getElementById("emailLogin").value;
+  const pass = document.getElementById("passLogin").value;
+
+  if(!email || !pass){ alert("All fields required!"); return; }
+
   signInWithEmailAndPassword(auth,email,pass)
-    .then(()=>{alert("Login Success!"); document.getElementById("auth").classList.remove("active"); document.getElementById("home").classList.add("active");})
+    .then(()=>{
+      alert("Login Success!");
+      document.getElementById("auth").classList.remove("active");
+      document.getElementById("home").classList.add("active");
+    })
     .catch(e=>alert("Login Error: "+e.message));
 }
 
-// 🔹 GOOGLE LOGIN
-export function googleLogin(){
-  const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider)
-    .then(()=>{alert("Google Login Success!"); document.getElementById("auth").classList.remove("active"); document.getElementById("home").classList.add("active");})
-    .catch(e=>alert("Google Login Error: "+e.message));
+// 🔹 DISCORD LOGIN (placeholder)
+export function discordLogin(){
+  alert("Discord login placeholder! Replace with OAuth URL.");
+  // yahan tu Discord OAuth link dal sakta hai
 }
