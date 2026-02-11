@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SDX NODES</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body{margin:0;font-family:Poppins;background:#0e0e0e;color:#fff;overflow-x:hidden;}
 nav{background:#111;padding:16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;}
-.menu-btn{font-size:26px;cursor:pointer;}
+.menu-btn{font-size:26px;cursor:pointer;display:none;}
 .menu{display:none;flex-direction:column;position:absolute;top:60px;right:10px;background:#111;border-radius:10px;padding:10px;}
 .menu a{color:white;text-decoration:none;padding:10px;font-weight:bold;}
 .page{display:none;padding:70px 6%;min-height:85vh;}
@@ -23,17 +23,24 @@ nav{background:#111;padding:16px;display:flex;justify-content:space-between;alig
 .card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 0 20px rgba(255,165,0,.35);}
 .price{color:orange;font-size:20px;font-weight:bold;}
 .card img{width:45px;}
+.user-info{display:flex;align-items:center;gap:10px;color:white;font-weight:bold;}
+.user-info img{width:32px;height:32px;border-radius:50%;}
 </style>
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav>
-<div style="color:orange;font-weight:bold;font-size:22px;">SDX NODES</div>
-<div class="menu-btn" onclick="toggleMenu()">☰</div>
+<div id="userProfile" class="user-info" style="display:none;">
+<img id="userAvatar" src="">
+<span id="userName"></span>
+</div>
+<div class="menu-btn" id="hamburger" onclick="toggleMenu()">☰</div>
 <div class="menu" id="menu">
 <a href="#" onclick="showPage('home')">Home</a>
 <a href="#" onclick="showPage('plans')">Plans</a>
 <a href="#" onclick="showPage('servers')">Servers</a>
+<a href="#" onclick="logoutUser()">Logout</a>
 </div>
 </nav>
 
@@ -42,7 +49,6 @@ nav{background:#111;padding:16px;display:flex;justify-content:space-between;alig
 <div class="auth-container">
 <h1 style="color:orange">Welcome to SDX NODES</h1>
 
-<!-- Signup Fields -->
 <div id="signupFields" style="display:none;flex-direction:column;align-items:center;gap:10px;">
 <input type="text" id="name" placeholder="Full Name">
 <input type="text" id="username" placeholder="Username">
@@ -52,7 +58,6 @@ nav{background:#111;padding:16px;display:flex;justify-content:space-between;alig
 <p style="cursor:pointer;color:#aaa;" onclick="toggleSignup(false)">Already have an account? Login</p>
 </div>
 
-<!-- Login Fields -->
 <div id="loginFields" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
 <input type="email" id="emailLogin" placeholder="Email">
 <input type="password" id="passLogin" placeholder="Password">
@@ -132,19 +137,15 @@ function toggleMenu(){
 let m=document.getElementById("menu");
 m.style.display=m.style.display=="flex"?"none":"flex";
 }
-
 function showPage(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 document.getElementById("menu").style.display="none";
 }
-
-// Toggle between login and signup
 function toggleSignup(show){
 document.getElementById("signupFields").style.display=show?"flex":"none";
 document.getElementById("loginFields").style.display=show?"none":"flex";
 }
 </script>
-
 </body>
 </html>
