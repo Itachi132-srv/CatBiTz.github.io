@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SDX NODES</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -15,7 +15,6 @@ background:#0e0e0e;
 color:#fff;
 }
 
-/* NAVBAR */
 nav{
 background:#111;
 padding:16px;
@@ -50,7 +49,6 @@ padding:10px;
 font-weight:bold;
 }
 
-/* PAGES */
 .page{
 display:none;
 padding:70px 6%;
@@ -61,7 +59,6 @@ min-height:85vh;
 display:block;
 }
 
-/* DISCORD BTN */
 .discord-btn{
 background:#5865F2;
 color:white;
@@ -75,12 +72,17 @@ gap:10px;
 margin-top:20px;
 }
 
-.discord-btn img{
-width:22px;
-filter:brightness(0);
+.start-btn{
+background:orange;
+color:#111;
+padding:14px 24px;
+border-radius:30px;
+text-decoration:none;
+font-weight:bold;
+margin-right:12px;
+display:inline-block;
 }
 
-/* COOL CARDS */
 .cool-card{
 background:#1a1a1a;
 padding:20px;
@@ -107,81 +109,58 @@ box-shadow:0 0 18px rgba(255,165,0,0.25);
 <a href="#" onclick="showPage('home')">Home</a>
 <a href="#" onclick="showPage('plans')">Plans</a>
 <a href="#" onclick="showPage('servers')">Servers</a>
-<a href="#" onclick="showPage('contact')">Contact</a>
 </div>
 </nav>
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <section id="home" class="page active" style="text-align:center;">
-<h1 style="font-size:48px;color:orange;margin-bottom:15px;">SDX NODES</h1>
+<h1 style="font-size:48px;color:orange;">SDX NODES</h1>
 <p style="font-size:20px;margin-bottom:20px;">Fast, Secure & Reliable Hosting</p>
 
+<a href="#" class="start-btn" onclick="showPage('plans')">Get Started</a>
+
 <a href="#" class="discord-btn">
-<img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png">
+<img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" width="20">
 Join Discord
 </a>
 </section>
 
-<!-- PLANS PAGE -->
+<!-- PLANS -->
 <section id="plans" class="page">
 <h1 style="margin-bottom:20px;">Hosting Plans</h1>
 
 <div style="margin-bottom:20px;">
-<button onclick="switchCurrency('PKR')" id="PKR" style="background:orange;color:#111;padding:8px 18px;border:none;border-radius:20px;margin-right:8px;cursor:pointer;">PKR</button>
-<button onclick="switchCurrency('INR')" id="INR" style="background:#222;color:#fff;padding:8px 18px;border:none;border-radius:20px;cursor:pointer;">INR</button>
+<button onclick="switchCurrency('PKR')" id="PKR">PKR</button>
+<button onclick="switchCurrency('INR')" id="INR">INR</button>
 </div>
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
 
 <div class="cool-card">
-<img src="grass.png" style="width:38px;position:absolute;top:15px;left:15px;">
-<h3 style="margin-top:35px;">Grass Plan</h3>
-<p>2GB RAM</p><p>100% CPU</p><p>24/7 Online</p>
+<h3>Grass Plan</h3>
+<p>2GB RAM</p>
 <p class="price" data-pkr="100" data-inr="30"></p>
 </div>
 
 <div class="cool-card">
-<img src="stone.png" style="width:38px;position:absolute;top:15px;left:15px;">
-<h3 style="margin-top:35px;">Stone Plan</h3>
-<p>4GB RAM</p><p>100% CPU</p><p>24/7 Online</p>
+<h3>Stone Plan</h3>
+<p>4GB RAM</p>
 <p class="price" data-pkr="170" data-inr="50"></p>
 </div>
 
 <div class="cool-card">
-<img src="iron.png" style="width:38px;position:absolute;top:15px;left:15px;">
-<h3 style="margin-top:35px;">Iron Plan</h3>
-<p>6GB RAM</p><p>100% CPU</p><p>24/7 Online</p>
+<h3>Iron Plan</h3>
+<p>6GB RAM</p>
 <p class="price" data-pkr="250" data-inr="75"></p>
 </div>
 
-<div class="cool-card">
-<img src="gold.png" style="width:38px;position:absolute;top:15px;left:15px;">
-<h3 style="margin-top:35px;">Gold Plan</h3>
-<p>8GB RAM</p><p>100% CPU</p><p>24/7 Online</p>
-<p class="price" data-pkr="400" data-inr="120"></p>
-</div>
-
-<div class="cool-card">
-<img src="diamond.png" style="width:38px;position:absolute;top:15px;left:15px;">
-<h3 style="margin-top:35px;">Diamond Plan</h3>
-<p>10GB RAM</p><p>100% CPU</p><p>24/7 Online</p>
-<p class="price" data-pkr="800" data-inr="240"></p>
-</div>
-
 </div>
 </section>
 
-<!-- SERVERS PAGE -->
+<!-- SERVERS -->
 <section id="servers" class="page">
 <h1>Servers</h1>
-<p>High performance nodes with stable uptime and fast deployment.</p>
-</section>
-
-<!-- CONTACT PAGE -->
-<section id="contact" class="page">
-<h1>Contact</h1>
-<p>Email: example@email.com</p>
-<p>Discord: yourserver</p>
+<p>High performance nodes with stable uptime.</p>
 </section>
 
 <script>
@@ -199,10 +178,6 @@ document.getElementById("menu").style.display="none";
 let currency="PKR";
 function switchCurrency(val){
 currency=val;
-document.getElementById('PKR').style.background = val=="PKR"?"orange":"#222";
-document.getElementById('PKR').style.color = val=="PKR"?"#111":"#fff";
-document.getElementById('INR').style.background = val=="INR"?"orange":"#222";
-document.getElementById('INR').style.color = val=="INR"?"#111":"#fff";
 document.querySelectorAll(".price").forEach(el=>{
 let pkr=el.getAttribute("data-pkr");
 let inr=el.getAttribute("data-inr");
